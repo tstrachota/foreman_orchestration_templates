@@ -1,0 +1,6 @@
+<%
+resource = input[:resource].constantize
+options = resource.all
+options = options.search_for(input[:filter]) if input[:filter]
+%>
+<%= select_f f, name, options, :id, :name, {}, { :label => input[:label], :class => "col-md-2", :help_inline => input[:description] } %>

@@ -1,0 +1,28 @@
+<% title _("Orchestration Jobs") %>
+
+<table class="<%= table_css_classes 'table-fixed' %>">
+  <thead>
+    <tr>
+      <th class="col-md-3"><%= sort :name, :as => s_("Orchestration Job|Name") %></th>
+      <th class="col-md-1"><%= _("Status") %></th>
+      <th class="col-md-1"><%= _('Actions') %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for job in @jobs %>
+    <tr>
+        <td class="display-two-pane ellipsis"><%= link_to(job.name, orchestration_job_path(job.to_param))
+                                        # link_to_if_authorized job,
+                                        #  hash_for_orchestration_job_path(:id => job.to_param).
+                                        #  merge(:auth_object => job, :authorizer => authorizer,
+                                        #  :permission => 'show_orchestration_jobs')
+                                         %>
+        </td>
+        <td class="ellipsis"><%= job.status %></td>
+        <td><%= #action_buttons(*permitted_actions(job))
+        %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= will_paginate_with_info @jobs %>

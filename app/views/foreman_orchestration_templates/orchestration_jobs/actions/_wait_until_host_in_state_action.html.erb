@@ -1,0 +1,13 @@
+
+<% action.messages.each do |msg| %>
+  msg.text
+<% end %>
+
+<% if action.host && !action.statuses.empty? %>
+  Host's status:
+  <ul>
+  <% action.statuses.each do |name, status| %>
+    <li><%= name + ": " + status['label'] %></li>
+  <% end %>
+  </ul>
+<% end %>

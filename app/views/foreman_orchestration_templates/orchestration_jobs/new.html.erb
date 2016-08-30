@@ -1,0 +1,8 @@
+<% title _("New Orchestration") %>
+
+<%= form_for :configuration, :url => orchestration_jobs_path(:template_id => @template.id) do |f| %>
+  <% @inputs.each do |key, input| %>
+    <%= render "foreman_orchestration_templates/orchestration_jobs/inputs/#{input[:type]}", :f => f, :input => input, :name => key %>
+  <% end %>
+  <%= submit_or_cancel f %>
+<% end %>

@@ -1,0 +1,18 @@
+<% if action.messages && !action.messages.empty? %>
+  <ul>
+  <% action.messages.each do |msg| %>
+    <li><%= msg.type + ': ' + msg.text %></li>
+  <% end %>
+  <ul>
+<% end %>
+
+<%=
+if action.output && action.output['object'] && action.output['object']['id']
+  host = Host.where(:id => action.output['object']['id']).first
+  if host.nil?
+    "Created host no longer exists"
+  else
+    "Host created: ".html_safe + link_to(host.name, host_path(host.to_param))
+  end
+end
+%>

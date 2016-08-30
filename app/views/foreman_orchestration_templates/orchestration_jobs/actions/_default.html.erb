@@ -1,0 +1,7 @@
+
+State: <%= action.run_step.state %><br>
+Output: <%= action.output %><br>
+
+<% action.messages.each do |msg| %>
+  msg.text
+<% end %>

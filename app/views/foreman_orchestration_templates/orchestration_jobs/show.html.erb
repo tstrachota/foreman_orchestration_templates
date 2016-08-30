@@ -1,0 +1,26 @@
+<% title _("Orchestration Job: %s") % @job.name %>
+
+
+<div>
+  Status: <%= @job.status %>
+  <% if @job.task.nil? %>
+    (<%= _('task not available') %>)
+  <% else %>
+    (<a href="<%= request.script_name %>/foreman_tasks/dynflow/<%= @job.task.external_id %>">dynflow task</a>)
+  <% end %>
+</div>
+
+<h3>Tasks:</h3>
+
+<div>
+  <% @job.actions.each do |action| %>
+    <div class="panel panel-<%= panel_class(action) %>">
+      <div class="panel-heading">
+        <b><%= action.humanized_name %></b> (<%= action.humanized_state %>)
+      </div>
+      <div class="panel-body">
+        <%= render action_partial(action), :action => action %>
+      </div>
+    </div>
+  <% end %>
+</div>
