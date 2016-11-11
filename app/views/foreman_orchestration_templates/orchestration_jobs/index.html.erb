@@ -19,8 +19,7 @@
                                          %>
         </td>
         <td class="ellipsis"><%= job.status %></td>
-        <td><%= #action_buttons(*permitted_actions(job))
-        %></td>
+        <td><%= action_buttons(link_to(_("Delete"), orchestration_job_path(job), :method => :delete)) %></td>
       </tr>
     <% end %>
   </tbody>

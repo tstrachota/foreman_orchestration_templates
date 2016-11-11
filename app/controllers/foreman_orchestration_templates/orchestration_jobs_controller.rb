@@ -4,9 +4,10 @@ module ForemanOrchestrationTemplates
     include Foreman::Controller::AutoCompleteSearch
 
     before_filter :find_template, :only => [:new, :create]
-    before_filter :find_job, :only => [:show]
+    before_filter :find_job, :only => [:show, :destroy]
 
     def index
+      params[:order] ||= 'id ASC'
       @jobs = resource_base.search_for(params[:search], :order => params[:order]).paginate(:page => params[:page])
     end
 
@@ -19,6 +20,14 @@ module ForemanOrchestrationTemplates
     def create
       job = OrchestrationJob.run_template(@template, params[:configuration])
       process_success :success_redirect => orchestration_job_path(job)
+    end
+
+    def destroy
+      if @job.destroy
+        process_success
+      else
+        process_error
+      end
     end
 
     def show

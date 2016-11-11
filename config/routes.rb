@@ -17,7 +17,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :orchestration_jobs, :only => [:new, :create, :show, :index] do
+    resources :orchestration_jobs, :only => [:new, :create, :show, :index, :destroy] do
       get :auto_complete_search, :on => :collection
     end
 

@@ -2,7 +2,7 @@ module ForemanOrchestrationTemplates
   class OrchestrationJob < ActiveRecord::Base
     include Authorizable
 
-    has_one :configuration, :class_name => ForemanOrchestrationTemplates::Configuration.name
+    has_one :configuration, :class_name => ForemanOrchestrationTemplates::Configuration.name, :dependent => :destroy
     belongs_to :task, :class_name => ForemanTasks::Task.name
 
     validates :name, :presence => true
