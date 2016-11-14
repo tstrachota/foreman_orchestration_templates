@@ -12,9 +12,7 @@ module ForemanOrchestrationTemplates
     end
 
     def new
-      tpl_reader = ForemanOrchestrationTemplates::Tasks::Planning::Reader.new
-      ForemanOrchestrationTemplates::Tasks::Planning::TemplateProcessor.run(tpl_reader, @template.template)
-      @inputs = tpl_reader.inputs
+      @inputs = read_inputs(@template)
     end
 
     def create
@@ -31,6 +29,7 @@ module ForemanOrchestrationTemplates
     end
 
     def show
+      @inputs = read_inputs(@job.template)
     end
 
     def find_template
@@ -39,6 +38,14 @@ module ForemanOrchestrationTemplates
 
     def find_job
       @job = OrchestrationJob.find(params[:id])
+    end
+
+    protected
+
+    def read_inputs(template)
+      tpl_reader = ForemanOrchestrationTemplates::Tasks::Planning::Reader.new
+      ForemanOrchestrationTemplates::Tasks::Planning::TemplateProcessor.run(tpl_reader, template.template)
+      tpl_reader.inputs
     end
   end
 end

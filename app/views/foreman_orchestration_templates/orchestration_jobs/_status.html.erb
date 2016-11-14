@@ -1,0 +1,14 @@
+<h3>Tasks:</h3>
+
+<div>
+  <% @job.actions.each do |action| %>
+    <div class="panel panel-<%= panel_class(action) %>">
+      <div class="panel-heading">
+        <b><%= action.humanized_name %></b> (<%= action.humanized_state %>)
+      </div>
+      <div class="panel-body">
+        <%= render action_partial(action), :action => action %>
+      </div>
+    </div>
+  <% end %>
+</div>

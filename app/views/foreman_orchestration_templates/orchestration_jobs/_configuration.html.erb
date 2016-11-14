@@ -1,0 +1,7 @@
+<h3>Configuration:</h3>
+
+<% @inputs.each do |key, input| %>
+  <% value = @job.configuration.values[key] %>
+  <%= render "foreman_orchestration_templates/orchestration_jobs/show_inputs/#{input[:type]}", :input => input, :name => key, :value => value %>
+<% end %>
+

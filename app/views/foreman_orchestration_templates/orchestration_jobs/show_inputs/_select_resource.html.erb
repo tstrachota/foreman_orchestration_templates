@@ -1,0 +1,7 @@
+<%
+resource_class = input[:resource].constantize
+resource = resource_class.where(:id => value).first
+label = resource.nil? ? _("not found") : resource.to_label
+%>
+
+<%= render 'foreman_orchestration_templates/orchestration_jobs/show_inputs/value', :input => input, :value => label %>
