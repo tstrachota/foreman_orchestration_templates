@@ -4,10 +4,12 @@
 <% end %>
 
 <% if action.host && !action.statuses.empty? %>
-  Host's status:
+  <%= _("Host's status:") %>
   <ul>
   <% action.statuses.each do |name, status| %>
     <li><%= name + ": " + status['label'] %></li>
   <% end %>
   </ul>
+<% else %>
+  <%= _("Host's status is unknown") %>
 <% end %>
