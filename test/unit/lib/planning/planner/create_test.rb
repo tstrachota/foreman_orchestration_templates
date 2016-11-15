@@ -38,10 +38,10 @@ end
 
 
 
-describe ForemanOrchestrationTemplates::Tasks::Planning::Planner do
+describe ForemanOrchestrationTemplates::Planning::Planner do
   before do
     @adaptor = DynflowAdaptorMock.new('planning_adaptor');
-    @planner = ForemanOrchestrationTemplates::Tasks::Planning::Planner.new(@adaptor, {})
+    @planner = ForemanOrchestrationTemplates::Planning::Planner.new(@adaptor, {})
   end
 
   context 'create resource' do
