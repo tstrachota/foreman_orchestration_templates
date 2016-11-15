@@ -45,7 +45,7 @@ module ForemanOrchestrationTemplates
 
         attr_reader :inputs
 
-        def initialize(planning_adapter, inputs = {}, current_user_id)
+        def initialize(planning_adapter, inputs = {}, current_user_id = nil)
           @inputs = inputs
           @planning_adapter = planning_adapter
           @current_user_id = current_user_id

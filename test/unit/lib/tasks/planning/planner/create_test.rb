@@ -48,7 +48,7 @@ describe ForemanOrchestrationTemplates::Tasks::Planning::Planner do
     let(:action_class) { ForemanOrchestrationTemplates::Tasks::CreateResourceAction }
 
     it 'plans correct action' do
-      @adaptor.expects_action_with(action_class, { 'type' => :architecture , 'parameters' => {} })
+      @adaptor.expects_action_with(action_class, { 'type' => :architecture , 'parameters' => {}, 'current_user_id' => nil })
       @planner.create(:architecture, {})
     end
 
@@ -56,7 +56,7 @@ describe ForemanOrchestrationTemplates::Tasks::Planning::Planner do
       params = {
         'name' => 'x86_64'
       }
-      @adaptor.expects_action_with(action_class, { 'type' => :architecture, 'parameters' => params })
+      @adaptor.expects_action_with(action_class, { 'type' => :architecture, 'parameters' => params, 'current_user_id' => nil })
       @planner.create(:architecture, { 'parameters' => params })
     end
 
@@ -72,7 +72,7 @@ describe ForemanOrchestrationTemplates::Tasks::Planning::Planner do
         'name' => 'x86_64',
         'hostgroup_ids' => [1, 2]
       }
-      @adaptor.expects_action_with(action_class, { 'type' => :architecture, 'parameters' => expected_params })
+      @adaptor.expects_action_with(action_class, { 'type' => :architecture, 'parameters' => expected_params, 'current_user_id' => nil })
       @planner.create(:architecture, { 'parameters' => params })
     end
 
@@ -101,7 +101,7 @@ describe ForemanOrchestrationTemplates::Tasks::Planning::Planner do
         'name' => 'img',
         'operatingsystem_id' => 3
       }
-      @adaptor.expects_action_with(action_class, { 'type' => :image, 'parameters' => expected_params })
+      @adaptor.expects_action_with(action_class, { 'type' => :image, 'parameters' => expected_params, 'current_user_id' => nil })
       @planner.create(:image, { 'parameters' => params })
     end
 
@@ -122,13 +122,13 @@ describe ForemanOrchestrationTemplates::Tasks::Planning::Planner do
     let(:action_class) { ForemanOrchestrationTemplates::Tasks::CreateHostAction }
 
     it 'plans correct action' do
-      @adaptor.expects_action_with(action_class, {'type' => :host, 'parameters' => {} })
+      @adaptor.expects_action_with(action_class, {'type' => :host, 'parameters' => {}, 'current_user_id' => nil })
       @planner.create(:host, {})
     end
 
     describe '#built' do
       it 'plans wait for action' do
-        @adaptor.expects_action_with(action_class, {'type' => :host, 'parameters' => {} })
+        @adaptor.expects_action_with(action_class, {'type' => :host, 'parameters' => {}, 'current_user_id' => nil })
         @adaptor.expects_action.with do |action_class, input|
           action_class == ForemanOrchestrationTemplates::Tasks::WaitUntilHostInStateAction &&
           input['until'] == 'built' &&
@@ -141,7 +141,7 @@ describe ForemanOrchestrationTemplates::Tasks::Planning::Planner do
 
     describe '#configured' do
       it 'plans wait for action' do
-        @adaptor.expects_action_with(action_class, {'type' => :host, 'parameters' => {} })
+        @adaptor.expects_action_with(action_class, {'type' => :host, 'parameters' => {}, 'current_user_id' => nil })
         @adaptor.expects_action.with do |action_class, input|
           action_class == ForemanOrchestrationTemplates::Tasks::WaitUntilHostInStateAction &&
           input['until'] == 'configured' &&
