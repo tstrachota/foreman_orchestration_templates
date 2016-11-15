@@ -1,12 +1,7 @@
 module ForemanOrchestrationTemplates
   module Methods
-    class ForemanServerFqdn
-
-      def run_read
-        foreman_server_fqdn
-      end
-
-      def run_plan
+    class ForemanServerFqdn < Base
+      def run
         foreman_server_fqdn
       end
 
