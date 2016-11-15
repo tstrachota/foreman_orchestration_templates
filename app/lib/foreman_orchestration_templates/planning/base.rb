@@ -1,17 +1,16 @@
+require 'foreman_orchestration_templates/methods'
+
 module ForemanOrchestrationTemplates
   module Planning
     class Base
-      ALOWED_METHODS = [
-        :find,
-        :foreman_server_fqdn,
-        :foreman_server,
-        :current_organization,
-        :current_location
-      ]
 
-      def foreman_server_fqdn
-        config = URI.parse(Setting[:foreman_url])
-        config.host
+      def allowed_methods
+        @allowed_methods ||= [
+          :find,
+          :foreman_server,
+          :current_organization,
+          :current_location
+        ]
       end
 
       def foreman_server
@@ -35,7 +34,17 @@ module ForemanOrchestrationTemplates
         Location.current
       end
 
+      def method_missing(method, *args)
+        if registry[method]
+          registry[method].send(execute_method, *args)
+        else
+          super
+        end
+      end
+
       protected
+      attr_reader :registry, :execute_method
+
       def type_to_class(type)
         type.to_s.camelize.constantize
       end

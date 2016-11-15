@@ -31,12 +31,15 @@ module ForemanOrchestrationTemplates
 
 
     class Reader < Base
-      ALOWED_METHODS = Base::ALOWED_METHODS + [
-        :input,
-        :create,
-        :execute,
-        :sequence
-      ]
+
+      def allowed_methods
+        @allowed_methods ||= super + @registry.keys + [
+          :input,
+          :create,
+          :execute,
+          :sequence
+        ]
+      end
 
       attr_reader :inputs
 
@@ -44,7 +47,8 @@ module ForemanOrchestrationTemplates
         yield
       end
 
-      def initialize
+      def initialize(registry)
+        @registry = registry
         @inputs = {}
       end
 
@@ -69,6 +73,11 @@ module ForemanOrchestrationTemplates
 
       def execute(*args)
         Reference.new
+      end
+
+      protected
+      def execute_method
+        :run_read
       end
     end
   end

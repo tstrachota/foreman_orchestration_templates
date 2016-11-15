@@ -6,7 +6,7 @@ module ForemanOrchestrationTemplates
       end
 
       def run(template)
-        box = Safemode::Box.new(@delegate, @delegate.class::ALOWED_METHODS)
+        box = Safemode::Box.new(@delegate, @delegate.allowed_methods)
         box.eval(template)
       end
 

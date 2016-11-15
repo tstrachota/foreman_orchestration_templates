@@ -43,7 +43,7 @@ module ForemanOrchestrationTemplates
     protected
 
     def read_inputs(template)
-      tpl_reader = ForemanOrchestrationTemplates::Planning::Reader.new
+      tpl_reader = ForemanOrchestrationTemplates::Planning::Reader.new(ForemanOrchestrationTemplates.registry)
       ForemanOrchestrationTemplates::Planning::TemplateProcessor.run(tpl_reader, template.template)
       tpl_reader.inputs
     end

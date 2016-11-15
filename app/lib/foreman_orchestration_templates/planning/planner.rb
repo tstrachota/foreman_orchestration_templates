@@ -35,17 +35,21 @@ module ForemanOrchestrationTemplates
     end
 
     class Planner < Base
-      ALOWED_METHODS = Base::ALOWED_METHODS + [
-        :input,
-        :create,
-        :execute,
-        :sequence
-      ]
+
+      def allowed_methods
+        @allowed_methods ||= super + @registry.keys + [
+          :input,
+          :create,
+          :execute,
+          :sequence
+        ]
+      end
 
       attr_reader :inputs
 
-      def initialize(planning_adapter, inputs = {}, current_user_id = nil)
+      def initialize(planning_adapter, registry, inputs = {}, current_user_id = nil)
         @inputs = inputs
+        @registry = registry
         @planning_adapter = planning_adapter
         @current_user_id = current_user_id
       end
@@ -105,6 +109,10 @@ module ForemanOrchestrationTemplates
       end
 
       protected
+      def execute_method
+        :run_plan
+      end
+
       def plan_action(action_class, input)
         @planning_adapter.plan_action(action_class, input)
       end
