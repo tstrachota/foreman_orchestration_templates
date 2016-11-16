@@ -3,4 +3,6 @@ module ForemanOrchestrationTemplates
   end
 end
 
-ForemanOrchestrationTemplates.registry[:foreman_server_fqdn] = ForemanOrchestrationTemplates::Methods::ForemanServerFqdn.new
+ForemanOrchestrationTemplates.registry[:foreman_server_fqdn] = 'ForemanOrchestrationTemplates::Methods::ForemanServerFqdn'
+ForemanOrchestrationTemplates.registry[:create] = 'ForemanOrchestrationTemplates::Methods::Create'
+ForemanOrchestrationTemplates.registry[:execute] = 'ForemanOrchestrationTemplates::Methods::Execute' if Object.const_defined? 'ForemanRemoteExecution'

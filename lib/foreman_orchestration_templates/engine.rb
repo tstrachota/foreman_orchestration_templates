@@ -41,6 +41,8 @@ module ForemanOrchestrationTemplates
     config.to_prepare do
       TemplatePathsHelper.send(:include, ForemanOrchestrationTemplates::OrchestrationTemplatePathsExtensions)
       ProvisioningTemplatesHelper.send(:include, ForemanOrchestrationTemplates::OrchestrationTemplatesExtensions)
+
+      require 'foreman_orchestration_templates/methods'
     end
 
     rake_tasks do

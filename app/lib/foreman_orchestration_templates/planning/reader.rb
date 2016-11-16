@@ -11,31 +11,11 @@ module ForemanOrchestrationTemplates
       end
     end
 
-    class HostOutputReference
-      class Jail < Safemode::Jail
-        allow :configured, :built, :[]
-      end
-
-      def configured
-        Reference.new
-      end
-
-      def built
-        Reference.new
-      end
-
-      def [](key)
-        Reference.new
-      end
-    end
-
-
     class Reader < Base
 
       def allowed_methods
         @allowed_methods ||= super + @registry.keys + [
           :input,
-          :create,
           :execute,
           :sequence
         ]
@@ -60,14 +40,6 @@ module ForemanOrchestrationTemplates
           params[:resource].constantize.new
         else
           @inputs[name]
-        end
-      end
-
-      def create(type, attributes)
-        if type == :host
-          HostOutputReference.new
-        else
-          Reference.new
         end
       end
 

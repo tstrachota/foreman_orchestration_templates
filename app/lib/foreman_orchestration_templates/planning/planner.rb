@@ -6,40 +6,11 @@ module ForemanOrchestrationTemplates
       end
     end
 
-    class HostOutputReferenceWrapper
-      class Jail < Safemode::Jail
-        allow :configured, :built, :[]
-      end
-
-      def initialize(original, planning_adapter)
-        @original = original
-        @planning_adapter = planning_adapter
-      end
-
-      def method_missing(name, *args, &block)
-        @original.send(name, *args, &block)
-      end
-
-      def configured
-        plan_wait('until' => 'configured', 'host_id' => @original[:object][:id]).output
-      end
-
-      def built
-        plan_wait('until' => 'built', 'host_id' => @original[:object][:id]).output
-      end
-
-      protected
-      def plan_wait(input)
-        @planning_adapter.plan_action(ForemanOrchestrationTemplates::Tasks::WaitUntilHostInStateAction, input)
-      end
-    end
-
     class Planner < Base
 
       def allowed_methods
         @allowed_methods ||= super + @registry.keys + [
           :input,
-          :create,
           :execute,
           :sequence
         ]
@@ -66,22 +37,9 @@ module ForemanOrchestrationTemplates
         @planning_adapter.sequence(&block)
       end
 
-      def create(type, attributes)
-        attributes[:type] = type
-        attributes = attributes.with_indifferent_access
-        attributes[:parameters] = references_to_ids(type_to_class(type), attributes[:parameters] || {})
-        attributes[:current_user_id] = @current_user_id
-
-        if type == :host
-          action = ForemanOrchestrationTemplates::Tasks::CreateHostAction
-          HostOutputReferenceWrapper.new(plan_action(action, attributes).output, @planning_adapter)
-        else
-          action = ForemanOrchestrationTemplates::Tasks::CreateResourceAction
-          plan_action(action, attributes).output
-        end
-      end
-
       def execute(attributes)
+        # Requires: name, (script and name) or template_id
+
         attributes[:on] = [attributes[:on]] unless attributes[:on].is_a? Array
         attributes[:on].map! do |host_ref|
           if host_ref.is_a? Integer
@@ -96,12 +54,10 @@ module ForemanOrchestrationTemplates
             raise "Unknown host reference #{host_ref}(#{host_ref.class})"
           end
         end
-        attributes[:template_id] = JobTemplate.find_by_name(attributes[:template]) unless attributes[:template]
         attributes[:current_user_id] = @current_user_id
 
         # :on => item or array of names or ids
         # :script
-        # :template
         # :template_id
         # :name
         # :inputs
@@ -111,6 +67,11 @@ module ForemanOrchestrationTemplates
       protected
       def execute_method
         :run_plan
+      end
+
+      def method(method_name)
+        @methods ||= {}
+        @methods[method_name] ||= registry[method_name].new(@planning_adapter)
       end
 
       def plan_action(action_class, input)
