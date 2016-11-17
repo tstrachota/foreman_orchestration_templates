@@ -21,10 +21,6 @@ module ForemanOrchestrationTemplates
         host
       end
 
-      def find(type, attributes, *rest)
-        type_to_class(type).where(attributes).first
-      end
-
       def current_organization
         Organization.current
       end
@@ -51,10 +47,6 @@ module ForemanOrchestrationTemplates
       def method(method_name)
         @methods ||= {}
         @methods[method_name] ||= registry[method_name].constantize.new
-      end
-
-      def type_to_class(type)
-        type.to_s.camelize.constantize
       end
     end
   end

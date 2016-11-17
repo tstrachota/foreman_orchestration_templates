@@ -26,7 +26,7 @@ module ForemanOrchestrationTemplates
       end
 
       def input(name, params={})
-        if params[:type] == :select_resource
+        if params[:type].to_sym == :select_resource
           params[:resource].constantize.find(@inputs[name].to_i)
         else
           @inputs[name]
@@ -76,31 +76,6 @@ module ForemanOrchestrationTemplates
 
       def plan_action(action_class, input)
         @planning_adapter.plan_action(action_class, input)
-      end
-
-      def references_to_ids(type_class, parameters)
-        type_class.reflections.values.each do |reflection|
-          if parameters[reflection.name]
-            if reflection.macro == :has_many
-              new_param_name = "#{reflection.name.to_s.singularize}_ids"
-              parameters[new_param_name] = parameters.delete(reflection.name).map { |r| reference_to_id(r) }
-            else
-              new_param_name = "#{reflection.name}_id"
-              parameters[new_param_name] = reference_to_id(parameters.delete(reflection.name))
-            end
-          end
-        end
-        parameters
-      end
-
-      def reference_to_id(reference)
-        if reference.is_a?(::Dynflow::ExecutionPlan::OutputReference)
-          reference[:id]
-        elsif reference.respond_to?(:id)
-          reference.id
-        else
-          raise "Instance of #{reference.class.name} doesn't respond to id!"
-        end
       end
     end
   end
