@@ -1,8 +1,25 @@
 <% title _("New Orchestration") %>
 
-<%= form_for :configuration, :url => orchestration_jobs_path(:template_id => @template.id) do |f| %>
-  <% @inputs.each do |key, input| %>
-    <%= render "foreman_orchestration_templates/orchestration_jobs/inputs/#{input[:type]}", :f => f, :input => input, :name => key %>
-  <% end %>
-  <%= submit_or_cancel f %>
-<% end %>
+<%= render 'form' %>
+
+<script>
+function refresh_config_form(element) {
+
+  var url = $('#orchestration_job_configuration').data('refresh-url');
+  var data = $('form input,select,textarea').serialize();
+
+  tfm.tools.showSpinner();
+
+  return $.ajax({
+    type: 'post',
+    url: url,
+    data: data,
+    complete: function(){ tfm.tools.hideSpinner(); },
+    success: function(response) {
+      $('#orchestration_job_configuration').replaceWith(response);
+
+      $(document.body).trigger('ContentLoad');
+    }
+  })
+}
+</script>

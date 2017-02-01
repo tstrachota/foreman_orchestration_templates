@@ -3,5 +3,7 @@
 resource = input[:resource].constantize
 options = resource.all
 options = options.search_for(input[:filter]) if input[:filter]
+multiple = input[:multiple]
 %>
-<%= select_f f, name, options, :id, :name, {}, { :label => input[:label], :class => "col-md-2", :help_inline => input[:description] } %>
+<%= select_f f, name, options, :id, :name, { :selected => input[:value] }, { :label => input[:label], :class => "col-md-2", :help_inline => input[:description], :multiple => multiple, :onchange => 'refresh_config_form(this);' } %>
+

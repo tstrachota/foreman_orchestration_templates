@@ -1,0 +1,6 @@
+
+<%
+options = input[:options]
+multiple = input[:multiple]
+%>
+<%= selectable_f f, name, options, { :selected => input[:value] }, { :label => input[:label], :class => "col-md-2", :help_inline => input[:description], :multiple => multiple, :onchange => 'refresh_config_form(this);' } %>

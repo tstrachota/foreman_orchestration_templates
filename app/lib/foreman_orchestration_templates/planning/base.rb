@@ -11,6 +11,14 @@ module ForemanOrchestrationTemplates
         ]
       end
 
+      def allowed_inputs
+        @allowed_inputs ||= [
+          :select,
+          :select_resource,
+          :text
+        ]
+      end
+
       def foreman_server
         host = Host.unscoped.where(:name => foreman_server_fqdn).first
         if host.nil?
@@ -46,7 +54,7 @@ module ForemanOrchestrationTemplates
 
       def method(method_name)
         @methods ||= {}
-        @methods[method_name] ||= registry[method_name].constantize.new
+        @methods[method_name] ||= registry[method_name].constantize.new(@planning_adapter)
       end
     end
   end

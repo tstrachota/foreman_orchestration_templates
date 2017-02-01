@@ -20,7 +20,7 @@ module ForemanOrchestrationTemplates
 
     def self.run_template(template, inputs)
       job = OrchestrationJob.new
-      job.task = ForemanTasks.async_task(ForemanOrchestrationTemplates::Tasks::OrchestrationJobAction, template.template, inputs, User.current)
+      job.task = ForemanTasks.async_task(ForemanOrchestrationTemplates::Tasks::OrchestrationJobAction, template.template_without_metadata, inputs, User.current)
 
       configuration = Configuration.new(:values => inputs, :template => template, :orchestration_job => job)
       configuration.save!

@@ -1,6 +1,10 @@
 <h3>Tasks:</h3>
 
 <div>
+  <% if @job.actions.empty? %>
+    <%= _("The template didn't plan any tasks") %>
+  <% end %>
+
   <% @job.actions.each do |action| %>
     <div class="panel panel-<%= panel_class(action) %>">
       <div class="panel-heading">

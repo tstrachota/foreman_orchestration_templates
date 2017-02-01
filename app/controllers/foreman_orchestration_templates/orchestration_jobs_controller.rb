@@ -3,7 +3,7 @@ module ForemanOrchestrationTemplates
     include ::ForemanOrchestrationTemplates::Parameters::OrchestrationTemplate
     include Foreman::Controller::AutoCompleteSearch
 
-    before_filter :find_template, :only => [:new, :create]
+    before_filter :find_template, :only => [:new, :create, :process_change]
     before_filter :find_job, :only => [:show, :destroy]
 
     def index
@@ -12,7 +12,7 @@ module ForemanOrchestrationTemplates
     end
 
     def new
-      @inputs = read_inputs(@template)
+      read_template(@template)
     end
 
     def create
@@ -29,7 +29,12 @@ module ForemanOrchestrationTemplates
     end
 
     def show
-      @inputs = read_inputs(@job.template)
+      read_template(@job.template)
+    end
+
+    def process_change
+      read_template(@template)
+      render :partial => "form"
     end
 
     def find_template
@@ -42,10 +47,10 @@ module ForemanOrchestrationTemplates
 
     protected
 
-    def read_inputs(template)
-      tpl_reader = ForemanOrchestrationTemplates::Planning::Reader.new(ForemanOrchestrationTemplates.registry)
-      ForemanOrchestrationTemplates::Planning::TemplateProcessor.run(tpl_reader, template.template)
-      tpl_reader.inputs
+    def read_template(template)
+      tpl_reader = ForemanOrchestrationTemplates::Planning::Reader.new(ForemanOrchestrationTemplates.registry, params[:configuration] || {})
+      @errors = ForemanOrchestrationTemplates::Planning::TemplateProcessor.run(tpl_reader, template.template_without_metadata)
+      @inputs = tpl_reader.inputs
     end
   end
 end

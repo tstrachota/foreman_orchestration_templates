@@ -29,6 +29,10 @@ module ForemanOrchestrationTemplates
       configurations.where.not(:template_id => nil)
     end
 
+    def template_without_metadata
+      template.gsub(/<%\#[\t a-z0-9=:]*(.+?).-?%>/m, '')
+    end
+
     def self.import!(name, text, metadata)
       current = self.find_by_name(name)
       if current.nil?

@@ -27,19 +27,29 @@ module ForemanOrchestrationTemplates
         yield
       end
 
-      def initialize(registry)
+      def initialize(registry, input_values = {})
         @registry = registry
         @inputs = {}
+        @input_values = input_values
       end
 
       def input(name, params={})
         params[:type] ||= :text
+
+        # TODO: create specific exception
+        raise "Unknown input type #{params[:type]}" unless allowed_inputs.include?(params[:type])
+
         params[:label] ||= name.to_s.gsub('_', ' ').capitalize
+        params[:value] = @input_values[name] || params[:value]
         @inputs[name] = params
         if params[:type] == :select_resource
-          params[:resource].constantize.new
+          if params[:value]
+            params[:resource].constantize.find(params[:value].to_i)
+          else
+            params[:resource].constantize.new
+          end
         else
-          @inputs[name]
+          params[:value]
         end
       end
 

@@ -1,0 +1,19 @@
+<div id="orchestration_job_configuration" data-refresh-url="<%= process_change_orchestration_jobs_path(:template_id => @template.id) %>">
+  <% if !@errors.empty? %>
+    <%= _("Errors occured while processing the template:") %>
+    <ul>
+    <% @errors.each do |error| %>
+      <li><%= error %></li>
+    <% end %>
+    </ul>
+  <% else %>
+
+    <%= form_for :configuration, :url => orchestration_jobs_path(:template_id => @template.id) do |f| %>
+      <% @inputs.each do |key, input| %>
+        <%= render "foreman_orchestration_templates/orchestration_jobs/inputs/#{input[:type]}", :f => f, :input => input, :name => key %>
+      <% end %>
+      <%= submit_or_cancel f %>
+    <% end %>
+
+  <% end %>
+</div>

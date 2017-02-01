@@ -19,17 +19,23 @@ module ForemanOrchestrationTemplates
       attr_reader :inputs
 
       def initialize(planning_adapter, registry, inputs = {}, current_user_id = nil)
-        @inputs = inputs
+        @input_values = inputs
         @registry = registry
         @planning_adapter = planning_adapter
         @current_user_id = current_user_id
       end
 
       def input(name, params={})
+        params[:type] ||= :text
+
+        # TODO: create specific exception
+        raise "Unknown input type #{params[:type]}" unless allowed_inputs.include?(params[:type])
+
+        params[:label] ||= name.to_s.gsub('_', ' ').capitalize
         if params[:type].to_sym == :select_resource
-          params[:resource].constantize.find(@inputs[name].to_i)
+          params[:resource].constantize.find(@input_values[name].to_i)
         else
-          @inputs[name]
+          @input_values[name]
         end
       end
 
@@ -67,11 +73,6 @@ module ForemanOrchestrationTemplates
       protected
       def execute_method
         :run_plan
-      end
-
-      def method(method_name)
-        @methods ||= {}
-        @methods[method_name] ||= registry[method_name].new(@planning_adapter)
       end
 
       def plan_action(action_class, input)
