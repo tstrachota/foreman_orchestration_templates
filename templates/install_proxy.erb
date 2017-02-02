@@ -1,0 +1,59 @@
+<%#
+model: ForemanOrchestrationTemplates::OrchestrationTemplate
+name: Install proxy
+%>
+
+proxy = input :host, :description => 'Target host to install proxy on', :type => :select_resource, :resource => 'Host'
+
+sequence do
+  generate_certs_inputs = {
+    :proxy_fqdn => proxy.name
+  }
+  execute :on => foreman_server, :name => 'Generate proxy certificates', :inputs => generate_certs_inputs, :script => <<-TPL
+    proxy_fqdn=<%= input('proxy_fqdn') %>
+    capsule_dir=~/proxy_certificates/$proxy_fqdn
+    mkdir -p $capsule_dir
+
+    pushd $capsule_dir
+    certs_tar_path=$(readlink -f ./certs.tar)
+    foreman-proxy-certs-generate \
+      --no-colors \
+      --foreman-proxy-fqdn "<%= input('proxy_fqdn') %>" \
+      --certs-tar $certs_tar_path > ./cert_generate_out.txt 2>&1
+    cat ./cert_generate_out.txt
+
+    echo 'certs_tar_on_proxy=$(readlink -f ./certs.tar)' > ./capsule_installer.sh
+    cat ./cert_generate_out.txt | egrep '^[ ]*foreman-installer|^[ ]*--' >> ./capsule_installer.sh
+    sed -i "s#\$certs_tar_path#\\\$certs_tar_on_proxy#g" ./capsule_installer.sh
+
+    scp -i ~/.ssh/id_rsa_foreman_proxy capsule_installer.sh $proxy_fqdn:~/
+    scp -i ~/.ssh/id_rsa_foreman_proxy certs.tar $proxy_fqdn:~/
+
+    popd
+
+    # rm -rf $capsule_dir
+  TPL
+
+  execute :on => proxy, :name => 'Add proxy repos', :script => <<-TPL
+    yum -y localinstall http://fedorapeople.org/groups/katello/releases/yum/3.3/katello/el7/x86_64/katello-repos-latest.rpm
+    yum -y localinstall http://yum.theforeman.org/releases/1.14/el7/x86_64/foreman-release.rpm
+    yum -y localinstall https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
+    yum -y localinstall http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    yum -y install foreman-release-scl
+  TPL
+
+  install_proxy_inputs = {
+    :katello_fqdn => foreman_server_fqdn,
+    :activation_key => "Katello on CentOS 7"
+  }
+  execute :on => proxy, :name => 'Install proxy', :inputs => install_proxy_inputs, :script => <<-TPL
+    yum -y update
+    yum install -y foreman-installer-katello
+
+    yum -y localinstall http://<%= input('katello_fqdn') %>/pub/katello-ca-consumer-latest.noarch.rpm
+    subscription-manager register --force --org="Default_Organization" --activationkey="<%= input('activation_key') %>"
+
+    chmod +x ~/capsule_installer.sh
+    ~/capsule_installer.sh
+  TPL
+end

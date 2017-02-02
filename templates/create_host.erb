@@ -1,0 +1,34 @@
+<%#
+model: ForemanOrchestrationTemplates::OrchestrationTemplate
+name: Create host
+%>
+
+create_host = input :create_host, :type => :select, :options => { 'Yes' => 'true', 'No, select existing' => 'false' }, :label => "Create new host", :value => 'true'
+
+
+if (create_host == 'true')
+  name = input(:name, :description => 'Name')
+  hg = input :host_group, :description => 'Host Group', :type => :select_resource, :resource => 'Hostgroup'
+  cr = input :compute_resource, :description => 'Compute Resource', :type => :select_resource, :resource => 'ComputeResource'
+  cp = input :compute_profile, :description => 'Compute Profile', :type => :select_resource, :resource => 'ComputeProfile'
+
+  org = current_organization || input(:organization, :type => :select_resource, :resource => 'Organization')
+  loc = current_location || input(:location, :type => :select_resource, :resource => 'Location')
+
+  host_params = {
+    :name => name,
+    :compute_resource => cr,
+    :compute_profile => cp,
+    :hostgroup => hg,
+    :organization => org,
+    :location => loc
+  }
+
+  proxy = create :host, :parameters => host_params
+  proxy.built
+else
+  proxy = input :host, :description => 'Host', :type => :select_resource, :resource => 'Host'
+end
+
+
+
