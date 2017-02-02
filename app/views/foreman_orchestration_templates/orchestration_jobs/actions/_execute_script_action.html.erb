@@ -1,9 +1,15 @@
-<%
-invocation = JobInvocation.find_by_task_id(action.output['task_id'])
-%>
+<% invocation = JobInvocation.find_by_task_id(action.output['task_id']) %>
 
-<%= link_to(invocation.description, job_invocation_path(invocation.id)) %><br>
-Successfully finished: <%= action.output['task']['success_count'] %> / <%= action.output['task']['total_count'] %><br>
+<% if invocation %>
+  <%= link_to(invocation.description, job_invocation_path(invocation.id)) %><br>
+  Target hosts:
+  <ul>
+  <% invocation.template_invocations.each do |tpl_invocation| %>
+    <% host = Host.unscoped.find(tpl_invocation.host_id) %>
+    <li><%= link_to(host, template_invocation_path(tpl_invocation.id)) %></li>
+  <% end %>
+  </ul>
+<% end %>
 State: <%= action.run_step.state %><br>
 
 <% action.messages.each do |msg| %>

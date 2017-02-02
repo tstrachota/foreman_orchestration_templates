@@ -4,7 +4,7 @@ module ForemanOrchestrationTemplates
       include Dynflow::Action::Polling
 
       def humanized_name
-        'Execute script'
+        'Execute script: ' + input[:name]
       end
 
       def done?
@@ -43,6 +43,9 @@ module ForemanOrchestrationTemplates
             end
             template.organizations = Organization.all
             template.locations = Location.all
+            template.save!
+          else
+            template.template = input[:script]
             template.save!
           end
           input[:template_id] = template.id

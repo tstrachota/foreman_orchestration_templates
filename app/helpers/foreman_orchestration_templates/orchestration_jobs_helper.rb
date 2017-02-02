@@ -9,6 +9,8 @@ module ForemanOrchestrationTemplates
         'danger'
       when :running
         'primary'
+      when :suspended
+        'primary'
       else
         'info ' + action.run_step.state.to_s
       end
