@@ -1,0 +1,11 @@
+<%
+invocation = JobInvocation.find_by_task_id(action.output['task_id'])
+%>
+
+<%= link_to(invocation.description, job_invocation_path(invocation.id)) %><br>
+Successfully finished: <%= action.output['task']['success_count'] %> / <%= action.output['task']['total_count'] %><br>
+State: <%= action.run_step.state %><br>
+
+<% action.messages.each do |msg| %>
+  msg.text
+<% end %>
