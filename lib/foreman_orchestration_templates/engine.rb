@@ -2,6 +2,8 @@ require 'foreman_tasks'
 
 module ForemanOrchestrationTemplates
   class Engine < ::Rails::Engine
+    engine_name 'foreman_orchestration_templates'
+
     config.autoload_paths.concat(Dir["#{config.root}/app/*/"])
     config.autoload_paths.concat(Dir["#{config.root}/app/*/concerns"])
     config.autoload_paths.concat(Dir["#{config.root}/test/"])
@@ -13,7 +15,7 @@ module ForemanOrchestrationTemplates
       end
     end
 
-    initializer 'foreman_orchestration_templates.register_plugin', after: :finisher_hook do
+    initializer 'foreman_orchestration_templates.register_plugin', before: :finisher_hook do
       Foreman::Plugin.register :foreman_orchestration_templates do
         requires_foreman '>= 1.8'
 
